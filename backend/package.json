@@ -1,0 +1,36 @@
+{
+  "name": "backend",
+  "version": "0.1.0",
+  "bin": {
+    "backend": "bin/backend.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@aws-appsync/utils": "^2.1.1",
+    "@types/aws-lambda": "^8.10.161",
+    "@types/jest": "^30",
+    "@types/node": "^24.10.1",
+    "aws-cdk": "2.1118.0",
+    "esbuild": "^0.28.0",
+    "glob": "^13.0.6",
+    "jest": "^30",
+    "ts-jest": "^29",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.9.3"
+  },
+  "dependencies": {
+    "@aws-amplify/auth": "^6.15.0",
+    "@aws-sdk/client-cognito-identity": "^3.1030.0",
+    "@aws-sdk/credential-providers": "^3.1030.0",
+    "@aws-sdk/client-dynamodb": "^3.1030.0",
+    "@aws-sdk/util-dynamodb": "^3.996.2",
+    "aws-amplify": "^6.15.0",
+    "aws-cdk-lib": "^2.248.0",
+    "constructs": "^10.5.0"
+  }
+}
