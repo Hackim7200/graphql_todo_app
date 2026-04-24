@@ -10,13 +10,13 @@ type Mutation {
 }
 
 type Subscription {
-  onTodoChanged(owner: String!): Todo!
+  onTodoChanged: Todo
     @aws_subscribe(mutations: ["createTodo", "updateTodo", "deleteTodo"])
 }
 
 input CreateTodoInput {
   title: String!
-  isCompleted: Boolean!
+  isCompleted: Boolean # optional - resolver defaults to false
 }
 
 input UpdateTodoInput {
@@ -35,10 +35,9 @@ type Todo {
 }
 
 type TodoConnection {
-  todos: [Todo!]!
+  items: [Todo!]! # renamed from "todos" - consistent pagination convention
   nextToken: String
 }
-
 # What is nextToken?
 # The listTodos query may have too many results to return at once. To avoid slow and expensive requests,
 # the API returns one "page" (up to the limit you set) at a time.
