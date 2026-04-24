@@ -4,10 +4,10 @@
 
 @url = https://d2ajcwzd35bstjzzsevh3nzday.appsync-api.eu-west-2.amazonaws.com/graphql
 # Cognito sub (ID token `sub`) for onTodoChanged(owner); must match the signed-in user.
-@owner = a672e224-a011-70b9-09cc-8b2c66fc9337 // this is user id 
-@token = eyJraWQiOiJJMGhPS1F3RmxhUEN0bms4YTBzK0NSeXJtNDA0cVIzUlRJS1o1alBoRzkwPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJhNjcyZTIyNC1hMDExLTcwYjktMDljYy04YjJjNjZmYzkzMzciLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMi5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTJfaXVRTERRUGdqIiwiY29nbml0bzp1c2VybmFtZSI6ImE2NzJlMjI0LWEwMTEtNzBiOS0wOWNjLThiMmM2NmZjOTMzNyIsIm9yaWdpbl9qdGkiOiI3ZWEwZWQ1Yi0xOTlkLTRhNWUtOGU5OC00ODNlMjFmZDkzYjgiLCJhdWQiOiI3NTU5cjd0dW42bHZnbWZxc2R2am5pMmRzIiwiZXZlbnRfaWQiOiIyNTg1NjZhOS1hYWViLTRhOTctYmY1Zi1lMDYwNTQ1YzZkOWQiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTc3NjY5OTAwNSwiZXhwIjoxNzc2NzAyNjA1LCJpYXQiOjE3NzY2OTkwMDUsImp0aSI6IjVhMDZhZDdiLTk3ODAtNDcwZC1hZmQ4LTQ4MmQyN2Q1Yzk3NCIsImVtYWlsIjoiaGlrbWF0aGFraW0uZGV2QGdtYWlsLmNvbSJ9.J3YbBWWy4IvF0izGcWclLIEU-UujmUV4lUJg2CLxBtswOaemnX7xBjwzeIM1-f3ip5QluxRIn9zwoItMOY3pNIhvhNj3SVUFHpzBStouvcNnfBqwCtXgiW2ZJbqtIPzHB-p9IeSHBTdhe7k6oNluudTQ7zgZDbwM8e9jAGwGLGzH9TuZgjP1y6vXmZ3Qp-dkErJNGb_HyKibDevuo7wF0-wCUdjQDU3NppgH1d2yKHMJEegRycVowY_nQIsNntB4WzLzGbb5ElQ5rgc7-HftefGSusJusjgqZDt6HS1M_1bXZnmcDYP6GioonM1XUoQ-pnnink0CpEKJyZW8hh5XrQ
+@token = eyJraWQiOiJJMGhPS1F3RmxhUEN0bms4YTBzK0NSeXJtNDA0cVIzUlRJS1o1alBoRzkwPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJhNjcyZTIyNC1hMDExLTcwYjktMDljYy04YjJjNjZmYzkzMzciLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMi5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTJfaXVRTERRUGdqIiwiY29nbml0bzp1c2VybmFtZSI6ImE2NzJlMjI0LWEwMTEtNzBiOS0wOWNjLThiMmM2NmZjOTMzNyIsIm9yaWdpbl9qdGkiOiI1Y2MyMTViZC1jMjVlLTQ4MDUtOGQ0Zi1jZTI4ZDgwZWI0YzYiLCJhdWQiOiI3NTU5cjd0dW42bHZnbWZxc2R2am5pMmRzIiwiZXZlbnRfaWQiOiI0NjYyNjg1OC0zNDAzLTQwMDEtYmVjMi1hMzViNGMxNjIyYjkiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTc3NzAyMjc0NiwiZXhwIjoxNzc3MDI2MzQ2LCJpYXQiOjE3NzcwMjI3NDYsImp0aSI6ImM4MTc5ZTM4LTk2YmQtNDdhMS1iYjhhLWUyZTY1ODk0OGMxMSIsImVtYWlsIjoiaGlrbWF0aGFraW0uZGV2QGdtYWlsLmNvbSJ9.bx8c1D4vLbJ-craAck9VaQ4hZ29YL4J8qTlLFsQ1Mc0UtPDePdooxzGlOEl9krHJkt4sCIKmEetmcfJIjcW9vbfGqwo2kINaqsPixCsZdJ9dTZGfEjMP4-0FCwctIIxsoZ6jlMHcdYi-Iap9UgdzYTTU_w-TXkxpRuP4WH1xevP0k4GZGLBnq9KMFH9WEup0HLGlCHqdOavsmAdQSs3pmnRPJXWlJyBu1349wA9eZevXlfrN8_obnReJ8PbOeB0nTalkszqvPOxS07T8UJVfPjX4-gRQOjQczm6FNaKQMBOP2OlrRDMpANEQQG4OZSxYlCbghJYefJ4Yp3larHNAHA
 
-# Subscription over WSS (not POST): subscription OnTodoChanged($owner: String!) { onTodoChanged(owner: $owner) { id title description isCompleted owner createdAt updatedAt } }
+
+# Subscription over WSS (not POST): subscription OnTodoChanged($owner: String!) { onTodoChanged(owner: $owner) { id title isCompleted owner createdAt updatedAt } }
 
 ### Create todo
 POST {{url}}
@@ -16,13 +16,25 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation CreateTodo($input: CreateTodoInput!) { createTodo(input: $input) { id title description isCompleted owner createdAt updatedAt } }",
+  "query": "mutation CreateTodo($input: CreateTodoInput!) { createTodo(input: $input) { id title isCompleted owner createdAt updatedAt } }",
   "variables": {
     "input": {
-      "title": "Tesing 2t",
-      "description": "Created from REST Client",
+      "title": "Testing 22",
       "isCompleted": false
     }
+  }
+}
+### List todos (paginated)
+POST {{url}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "query": "query ListTodos($limit: Int, $nextToken: String) { listTodos(limit: $limit, nextToken: $nextToken) { todos { id title isCompleted owner createdAt updatedAt } nextToken } }",
+  "variables": {
+    "limit": 10,
+    "nextToken": null
   }
 }
 
@@ -33,25 +45,13 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "query": "query GetTodo($id: String!) { getTodo(id: $id) { id title description isCompleted owner createdAt updatedAt } }",
+  "query": "query GetTodo($id: ID!) { getTodo(id: $id) { id title isCompleted owner createdAt updatedAt } }",
   "variables": {
-    "id": "00000000-0000-4000-8000-000000000000"
+    "id": "73553b27-d36f-4192-b119-0a3e308ad54d"
   }
 }
 
-### List todos (paginated)
-POST {{url}}
-Content-Type: application/json
-Accept: application/json
-Authorization: Bearer {{token}}
 
-{
-  "query": "query ListTodos($limit: Int, $nextToken: String) { listTodos(limit: $limit, nextToken: $nextToken) { todos { id title description isCompleted owner createdAt updatedAt } nextToken } }",
-  "variables": {
-    "limit": 10,
-    "nextToken": null
-  }
-}
 
 ### Update todo (replace id with a real todo id)
 POST {{url}}
@@ -60,12 +60,11 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation UpdateTodo($input: UpdateTodoInput!) { updateTodo(input: $input) { id title description isCompleted owner createdAt updatedAt } }",
+  "query": "mutation UpdateTodo($input: UpdateTodoInput!) { updateTodo(input: $input) { id title isCompleted owner createdAt updatedAt } }",
   "variables": {
     "input": {
-      "id": "00000000-0000-4000-8000-000000000000",
+      "id": "73553b27-d36f-4192-b119-0a3e308ad54d",
       "title": "Updated title",
-      "description": "Updated from REST Client",
       "isCompleted": true
     }
   }
@@ -78,8 +77,8 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation DeleteTodo($id: String!) { deleteTodo(id: $id) { id title description isCompleted owner createdAt updatedAt } }",
+  "query": "mutation DeleteTodo($id: ID!) { deleteTodo(id: $id) { id title isCompleted owner createdAt updatedAt } }",
   "variables": {
-    "id": "1d5c2d3f-d8b3-4ace-bd94-496f45a4eea3"
+    "id": "73553b27-d36f-4192-b119-0a3e308ad54d"
   }
 }

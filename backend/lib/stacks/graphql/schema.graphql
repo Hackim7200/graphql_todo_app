@@ -1,47 +1,40 @@
 type Query {
-  getTodo(id: String!): Todo! @aws_cognito_user_pools
-  listTodos(limit: Int, nextToken: String): PaginatedTodos!
-    @aws_cognito_user_pools
+  getTodo(id: ID!): Todo!
+  listTodos(limit: Int, nextToken: String): TodoConnection!
 }
 
 type Mutation {
-  createTodo(input: CreateTodoInput!): Todo! @aws_cognito_user_pools
-  updateTodo(input: UpdateTodoInput!): Todo! @aws_cognito_user_pools
-  deleteTodo(id: String!): Todo! @aws_cognito_user_pools
+  createTodo(input: CreateTodoInput!): Todo!
+  updateTodo(input: UpdateTodoInput!): Todo!
+  deleteTodo(id: ID!): Todo!
 }
 
-# Subscriptions use the AppSync realtime WebSocket endpoint (see stack output AppSyncRealtimeUrl).
-# Pass owner = Cognito user sub so you only receive todos for that user (matches mutation results).
 type Subscription {
   onTodoChanged(owner: String!): Todo!
     @aws_subscribe(mutations: ["createTodo", "updateTodo", "deleteTodo"])
-    @aws_cognito_user_pools
 }
 
 input CreateTodoInput {
   title: String!
-  description: String!
   isCompleted: Boolean!
 }
 
 input UpdateTodoInput {
   id: ID!
-  title: String!
-  description: String!
-  isCompleted: Boolean!
+  title: String
+  isCompleted: Boolean
 }
 
 type Todo {
   id: ID!
   title: String!
-  description: String!
   isCompleted: Boolean!
   owner: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
 
-type PaginatedTodos {
+type TodoConnection {
   todos: [Todo!]!
   nextToken: String
 }
