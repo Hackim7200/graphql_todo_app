@@ -1,0 +1,2 @@
+# Events domain — add `extend type Query` / `extend type Mutation` and types here
+# when you implement events (see todos.graphql for the pattern).

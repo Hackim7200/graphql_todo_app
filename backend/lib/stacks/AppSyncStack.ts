@@ -7,6 +7,10 @@ import {
   FunctionRuntime,
   GraphqlApi,
 } from "aws-cdk-lib/aws-appsync";
+import {
+  appSyncMergedSchema,
+  writeMergedGraphqlSchema,
+} from "../graphql/index";
 import { IUserPool } from "aws-cdk-lib/aws-cognito";
 import { ITable } from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
@@ -24,11 +28,10 @@ export class AppSyncStack extends Stack {
 
     // Same pool and client pattern as ApiGatewayStack: Cognito JWT in `Authorization` (typically the ID token).
     // AppSync uses USER_POOL auth instead of RestApi + CognitoUserPoolsAuthorizer.
+    writeMergedGraphqlSchema();
     const api = new GraphqlApi(this, `${props.appName}-AppSyncApi`, {
       name: `${props.appName}-AppSyncApi`,
-      definition: Definition.fromFile(
-        path.join(__dirname, "graphql/schema.graphql"),
-      ),
+      definition: Definition.fromSchema(appSyncMergedSchema),
       authorizationConfig: {
         defaultAuthorization: {
           authorizationType: AuthorizationType.USER_POOL,
