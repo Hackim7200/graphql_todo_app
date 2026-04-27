@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
 
-import '../model/TodoModel.dart';
+import '../model/todo_model.dart';
 
 class TodoService {
   const TodoService();
