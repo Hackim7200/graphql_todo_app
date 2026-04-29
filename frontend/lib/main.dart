@@ -68,8 +68,5 @@ Future<void> initAppDatabase() async {
   } else {
     print("Folder already exists at ${dbDir.path}");
   }
-  database = AppDatabase(
-    dbDirectory: dbDir,
-    sqliteFileName: 'app.db',
-  );
+  database = AppDatabase(dbDirectory: dbDir, sqliteFileName: 'app.db');
 }
