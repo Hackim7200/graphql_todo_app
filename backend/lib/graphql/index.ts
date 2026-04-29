@@ -6,7 +6,7 @@ import type {
   SchemaBindOptions,
 } from "aws-cdk-lib/aws-appsync";
 
-/** Order matters: base roots first, then shared types, then domain extensions. */
+/** Order matters: schema root mapping (base.graphql), then shared notes, then domain types. */
 const MERGE_ORDER = [
   "base.graphql",
   "shared.graphql",

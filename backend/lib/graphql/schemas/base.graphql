@@ -1,9 +1,4 @@
-type Query
-
-type Mutation
-
-type Subscription
-
+# Root operation mapping only. Concrete Query/Mutation/Subscription fields live in domain files (e.g. todos.graphql).
 schema {
   query: Query
   mutation: Mutation

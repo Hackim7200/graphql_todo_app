@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -95,25 +96,53 @@ class TodoService {
     _throwIfGraphQLErrors(response.errors, operation: 'delete');
   }
 
+  /// Subscribes to todo mutations for the signed-in user (who owns rows matches JWT `sub` via AppSync subscription filter).
   Stream<void> onTodoChanged() {
-    final request = GraphQLRequest<String>(
-      apiName: _graphqlApiName,
-      document: r'''
-        subscription OnTodoChanged {
-          onTodoChanged {
-            id
-          }
-        }
-      ''',
-    );
+    StreamSubscription<GraphQLResponse<String>>? sub;
+    late StreamController<void> controller;
 
-    return Amplify.API.subscribe(
-      request,
-      onEstablished: () => safePrint('Todo subscription established'),
-    ).map((response) {
-      _throwIfGraphQLErrors(response.errors, operation: 'subscribe to todos');
-      _requireData(response.data);
-    });
+    Future<void> setup() async {
+      try {
+        await Amplify.Auth.getCurrentUser();
+        final request = GraphQLRequest<String>(
+          apiName: _graphqlApiName,
+          document: r'''
+            subscription OnTodoChanged {
+              onTodoChanged { id title isCompleted owner }
+            }
+          ''',
+        );
+        sub = Amplify.API
+            .subscribe(
+              request,
+              onEstablished: () =>
+                  safePrint('Todo mutation subscription established'),
+            )
+            .listen(
+              (response) {
+                _throwIfGraphQLErrors(
+                  response.errors,
+                  operation: 'subscribe to todos',
+                );
+                _requireData(response.data);
+                if (!controller.isClosed) controller.add(null);
+              },
+              onError: (Object e, StackTrace st) {
+                if (!controller.isClosed) controller.addError(e, st);
+              },
+            );
+      } catch (e, st) {
+        if (!controller.isClosed) controller.addError(e, st);
+      }
+    }
+
+    controller = StreamController<void>(
+      onListen: setup,
+      onCancel: () async {
+        await sub?.cancel();
+      },
+    );
+    return controller.stream;
   }
 
   static String _requireData(String? data) {

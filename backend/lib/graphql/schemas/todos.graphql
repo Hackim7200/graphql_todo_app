@@ -1,22 +1,24 @@
-extend type Query {
+type Query {
   getTodo(id: ID!): Todo!
   listTodos(limit: Int, nextToken: String): TodoConnection!
 }
 
-extend type Mutation {
+type Mutation {
   createTodo(input: CreateTodoInput!): Todo!
   updateTodo(input: UpdateTodoInput!): Todo!
   deleteTodo(id: ID!): Todo!
 }
 
-extend type Subscription {
+type Subscription {
   onTodoChanged: Todo
-    @aws_subscribe(mutations: ["createTodo", "updateTodo", "deleteTodo"])
+    @aws_subscribe(
+      mutations: ["createTodo", "updateTodo", "deleteTodo"]
+    )
 }
 
 input CreateTodoInput {
   title: String!
-  isCompleted: Boolean # optional - resolver defaults to false
+  isCompleted: Boolean
 }
 
 input UpdateTodoInput {

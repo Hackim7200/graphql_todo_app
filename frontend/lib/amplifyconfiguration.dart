@@ -12,15 +12,15 @@ const String amplifyconfig = '''
         "CredentialsProvider": {
           "CognitoIdentity": {
             "Default": {
-              "PoolId": "eu-west-2:aa61fcf2-d366-44dd-9f5b-e99f9878687c",
+              "PoolId": "eu-west-2:f70c4a4f-5bc7-449e-918a-eefdc30aed4d",
               "Region": "eu-west-2"
             }
           }
         },
         "CognitoUserPool": {
           "Default": {
-            "PoolId": "eu-west-2_iuQLDQPgj",
-            "AppClientId": "7559r7tun6lvgmfqsdvjni2ds",
+            "PoolId": "eu-west-2_vp6FqciTk",
+            "AppClientId": "6irk04c58fed8tr8upero9f9um",
             "Region": "eu-west-2"
           }
         },
@@ -47,13 +47,13 @@ const String amplifyconfig = '''
       "awsAPIPlugin": {
         "PomodoroPlansApi": {
           "endpointType": "REST",
-          "endpoint": "https://j895lge6rh.execute-api.eu-west-2.amazonaws.com/prod/",
+          "endpoint": "https://osrafl3fyj.execute-api.eu-west-2.amazonaws.com/prod/",
           "region": "eu-west-2",
           "authorizationType": "AMAZON_COGNITO_USER_POOLS"
         },
         "PomodoroPlansGraphQLApi": {
           "endpointType": "GraphQL",
-          "endpoint": "https://d2ajcwzd35bstjzzsevh3nzday.appsync-api.eu-west-2.amazonaws.com/graphql",
+          "endpoint": "https://coqaixyo6rg2bjmfbgefexyysm.appsync-api.eu-west-2.amazonaws.com/graphql",
           "region": "eu-west-2",
           "authorizationType": "AMAZON_COGNITO_USER_POOLS"
         }
