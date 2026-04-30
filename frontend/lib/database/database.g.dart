@@ -587,6 +587,73 @@ class $PomodoroTableTable extends PomodoroTable
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _isDeletedMeta = const VerificationMeta(
+    'isDeleted',
+  );
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+    'is_deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _syncStatusMeta = const VerificationMeta(
+    'syncStatus',
+  );
+  @override
+  late final GeneratedColumn<String> syncStatus = GeneratedColumn<String>(
+    'sync_status',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 16,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -595,6 +662,11 @@ class $PomodoroTableTable extends PomodoroTable
     startTime,
     endTime,
     completed,
+    version,
+    updatedAt,
+    createdAt,
+    isDeleted,
+    syncStatus,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -648,6 +720,36 @@ class $PomodoroTableTable extends PomodoroTable
         completed.isAcceptableOrUnknown(data['completed']!, _completedMeta),
       );
     }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('is_deleted')) {
+      context.handle(
+        _isDeletedMeta,
+        isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta),
+      );
+    }
+    if (data.containsKey('sync_status')) {
+      context.handle(
+        _syncStatusMeta,
+        syncStatus.isAcceptableOrUnknown(data['sync_status']!, _syncStatusMeta),
+      );
+    }
     return context;
   }
 
@@ -681,6 +783,26 @@ class $PomodoroTableTable extends PomodoroTable
         DriftSqlType.bool,
         data['${effectivePrefix}completed'],
       )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      isDeleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_deleted'],
+      )!,
+      syncStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_status'],
+      )!,
     );
   }
 
@@ -698,6 +820,11 @@ class PomodoroTableData extends DataClass
   final DateTime startTime;
   final DateTime? endTime;
   final bool completed;
+  final int version;
+  final DateTime updatedAt;
+  final DateTime createdAt;
+  final bool isDeleted;
+  final String syncStatus;
   const PomodoroTableData({
     required this.id,
     required this.todoId,
@@ -705,6 +832,11 @@ class PomodoroTableData extends DataClass
     required this.startTime,
     this.endTime,
     required this.completed,
+    required this.version,
+    required this.updatedAt,
+    required this.createdAt,
+    required this.isDeleted,
+    required this.syncStatus,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -717,6 +849,11 @@ class PomodoroTableData extends DataClass
       map['end_time'] = Variable<DateTime>(endTime);
     }
     map['completed'] = Variable<bool>(completed);
+    map['version'] = Variable<int>(version);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    map['sync_status'] = Variable<String>(syncStatus);
     return map;
   }
 
@@ -730,6 +867,11 @@ class PomodoroTableData extends DataClass
           ? const Value.absent()
           : Value(endTime),
       completed: Value(completed),
+      version: Value(version),
+      updatedAt: Value(updatedAt),
+      createdAt: Value(createdAt),
+      isDeleted: Value(isDeleted),
+      syncStatus: Value(syncStatus),
     );
   }
 
@@ -745,6 +887,11 @@ class PomodoroTableData extends DataClass
       startTime: serializer.fromJson<DateTime>(json['startTime']),
       endTime: serializer.fromJson<DateTime?>(json['endTime']),
       completed: serializer.fromJson<bool>(json['completed']),
+      version: serializer.fromJson<int>(json['version']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+      syncStatus: serializer.fromJson<String>(json['syncStatus']),
     );
   }
   @override
@@ -757,6 +904,11 @@ class PomodoroTableData extends DataClass
       'startTime': serializer.toJson<DateTime>(startTime),
       'endTime': serializer.toJson<DateTime?>(endTime),
       'completed': serializer.toJson<bool>(completed),
+      'version': serializer.toJson<int>(version),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+      'syncStatus': serializer.toJson<String>(syncStatus),
     };
   }
 
@@ -767,6 +919,11 @@ class PomodoroTableData extends DataClass
     DateTime? startTime,
     Value<DateTime?> endTime = const Value.absent(),
     bool? completed,
+    int? version,
+    DateTime? updatedAt,
+    DateTime? createdAt,
+    bool? isDeleted,
+    String? syncStatus,
   }) => PomodoroTableData(
     id: id ?? this.id,
     todoId: todoId ?? this.todoId,
@@ -774,6 +931,11 @@ class PomodoroTableData extends DataClass
     startTime: startTime ?? this.startTime,
     endTime: endTime.present ? endTime.value : this.endTime,
     completed: completed ?? this.completed,
+    version: version ?? this.version,
+    updatedAt: updatedAt ?? this.updatedAt,
+    createdAt: createdAt ?? this.createdAt,
+    isDeleted: isDeleted ?? this.isDeleted,
+    syncStatus: syncStatus ?? this.syncStatus,
   );
   PomodoroTableData copyWithCompanion(PomodoroTableCompanion data) {
     return PomodoroTableData(
@@ -785,6 +947,13 @@ class PomodoroTableData extends DataClass
       startTime: data.startTime.present ? data.startTime.value : this.startTime,
       endTime: data.endTime.present ? data.endTime.value : this.endTime,
       completed: data.completed.present ? data.completed.value : this.completed,
+      version: data.version.present ? data.version.value : this.version,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
+      syncStatus: data.syncStatus.present
+          ? data.syncStatus.value
+          : this.syncStatus,
     );
   }
 
@@ -796,14 +965,30 @@ class PomodoroTableData extends DataClass
           ..write('durationMinutes: $durationMinutes, ')
           ..write('startTime: $startTime, ')
           ..write('endTime: $endTime, ')
-          ..write('completed: $completed')
+          ..write('completed: $completed, ')
+          ..write('version: $version, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('syncStatus: $syncStatus')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, todoId, durationMinutes, startTime, endTime, completed);
+  int get hashCode => Object.hash(
+    id,
+    todoId,
+    durationMinutes,
+    startTime,
+    endTime,
+    completed,
+    version,
+    updatedAt,
+    createdAt,
+    isDeleted,
+    syncStatus,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -813,7 +998,12 @@ class PomodoroTableData extends DataClass
           other.durationMinutes == this.durationMinutes &&
           other.startTime == this.startTime &&
           other.endTime == this.endTime &&
-          other.completed == this.completed);
+          other.completed == this.completed &&
+          other.version == this.version &&
+          other.updatedAt == this.updatedAt &&
+          other.createdAt == this.createdAt &&
+          other.isDeleted == this.isDeleted &&
+          other.syncStatus == this.syncStatus);
 }
 
 class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
@@ -823,6 +1013,11 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
   final Value<DateTime> startTime;
   final Value<DateTime?> endTime;
   final Value<bool> completed;
+  final Value<int> version;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime> createdAt;
+  final Value<bool> isDeleted;
+  final Value<String> syncStatus;
   const PomodoroTableCompanion({
     this.id = const Value.absent(),
     this.todoId = const Value.absent(),
@@ -830,6 +1025,11 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
     this.startTime = const Value.absent(),
     this.endTime = const Value.absent(),
     this.completed = const Value.absent(),
+    this.version = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.syncStatus = const Value.absent(),
   });
   PomodoroTableCompanion.insert({
     this.id = const Value.absent(),
@@ -838,6 +1038,11 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
     required DateTime startTime,
     this.endTime = const Value.absent(),
     this.completed = const Value.absent(),
+    this.version = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.syncStatus = const Value.absent(),
   }) : todoId = Value(todoId),
        startTime = Value(startTime);
   static Insertable<PomodoroTableData> custom({
@@ -847,6 +1052,11 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
     Expression<DateTime>? startTime,
     Expression<DateTime>? endTime,
     Expression<bool>? completed,
+    Expression<int>? version,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? createdAt,
+    Expression<bool>? isDeleted,
+    Expression<String>? syncStatus,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -855,6 +1065,11 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
       if (startTime != null) 'start_time': startTime,
       if (endTime != null) 'end_time': endTime,
       if (completed != null) 'completed': completed,
+      if (version != null) 'version': version,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (isDeleted != null) 'is_deleted': isDeleted,
+      if (syncStatus != null) 'sync_status': syncStatus,
     });
   }
 
@@ -865,6 +1080,11 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
     Value<DateTime>? startTime,
     Value<DateTime?>? endTime,
     Value<bool>? completed,
+    Value<int>? version,
+    Value<DateTime>? updatedAt,
+    Value<DateTime>? createdAt,
+    Value<bool>? isDeleted,
+    Value<String>? syncStatus,
   }) {
     return PomodoroTableCompanion(
       id: id ?? this.id,
@@ -873,6 +1093,11 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       completed: completed ?? this.completed,
+      version: version ?? this.version,
+      updatedAt: updatedAt ?? this.updatedAt,
+      createdAt: createdAt ?? this.createdAt,
+      isDeleted: isDeleted ?? this.isDeleted,
+      syncStatus: syncStatus ?? this.syncStatus,
     );
   }
 
@@ -897,6 +1122,21 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
     if (completed.present) {
       map['completed'] = Variable<bool>(completed.value);
     }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (isDeleted.present) {
+      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    }
+    if (syncStatus.present) {
+      map['sync_status'] = Variable<String>(syncStatus.value);
+    }
     return map;
   }
 
@@ -908,7 +1148,12 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
           ..write('durationMinutes: $durationMinutes, ')
           ..write('startTime: $startTime, ')
           ..write('endTime: $endTime, ')
-          ..write('completed: $completed')
+          ..write('completed: $completed, ')
+          ..write('version: $version, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('syncStatus: $syncStatus')
           ..write(')'))
         .toString();
   }
@@ -1303,6 +1548,11 @@ typedef $$PomodoroTableTableCreateCompanionBuilder =
       required DateTime startTime,
       Value<DateTime?> endTime,
       Value<bool> completed,
+      Value<int> version,
+      Value<DateTime> updatedAt,
+      Value<DateTime> createdAt,
+      Value<bool> isDeleted,
+      Value<String> syncStatus,
     });
 typedef $$PomodoroTableTableUpdateCompanionBuilder =
     PomodoroTableCompanion Function({
@@ -1312,6 +1562,11 @@ typedef $$PomodoroTableTableUpdateCompanionBuilder =
       Value<DateTime> startTime,
       Value<DateTime?> endTime,
       Value<bool> completed,
+      Value<int> version,
+      Value<DateTime> updatedAt,
+      Value<DateTime> createdAt,
+      Value<bool> isDeleted,
+      Value<String> syncStatus,
     });
 
 final class $$PomodoroTableTableReferences
@@ -1377,6 +1632,31 @@ class $$PomodoroTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get syncStatus => $composableBuilder(
+    column: $table.syncStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$TodoTableTableFilterComposer get todoId {
     final $$TodoTableTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -1435,6 +1715,31 @@ class $$PomodoroTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get syncStatus => $composableBuilder(
+    column: $table.syncStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$TodoTableTableOrderingComposer get todoId {
     final $$TodoTableTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -1484,6 +1789,23 @@ class $$PomodoroTableTableAnnotationComposer
 
   GeneratedColumn<bool> get completed =>
       $composableBuilder(column: $table.completed, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDeleted =>
+      $composableBuilder(column: $table.isDeleted, builder: (column) => column);
+
+  GeneratedColumn<String> get syncStatus => $composableBuilder(
+    column: $table.syncStatus,
+    builder: (column) => column,
+  );
 
   $$TodoTableTableAnnotationComposer get todoId {
     final $$TodoTableTableAnnotationComposer composer = $composerBuilder(
@@ -1543,6 +1865,11 @@ class $$PomodoroTableTableTableManager
                 Value<DateTime> startTime = const Value.absent(),
                 Value<DateTime?> endTime = const Value.absent(),
                 Value<bool> completed = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
+                Value<String> syncStatus = const Value.absent(),
               }) => PomodoroTableCompanion(
                 id: id,
                 todoId: todoId,
@@ -1550,6 +1877,11 @@ class $$PomodoroTableTableTableManager
                 startTime: startTime,
                 endTime: endTime,
                 completed: completed,
+                version: version,
+                updatedAt: updatedAt,
+                createdAt: createdAt,
+                isDeleted: isDeleted,
+                syncStatus: syncStatus,
               ),
           createCompanionCallback:
               ({
@@ -1559,6 +1891,11 @@ class $$PomodoroTableTableTableManager
                 required DateTime startTime,
                 Value<DateTime?> endTime = const Value.absent(),
                 Value<bool> completed = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
+                Value<String> syncStatus = const Value.absent(),
               }) => PomodoroTableCompanion.insert(
                 id: id,
                 todoId: todoId,
@@ -1566,6 +1903,11 @@ class $$PomodoroTableTableTableManager
                 startTime: startTime,
                 endTime: endTime,
                 completed: completed,
+                version: version,
+                updatedAt: updatedAt,
+                createdAt: createdAt,
+                isDeleted: isDeleted,
+                syncStatus: syncStatus,
               ),
           withReferenceMapper: (p0) => p0
               .map(

@@ -19,13 +19,20 @@ class AppDatabase extends _$AppDatabase {
     : super(_openConnection(dbDirectory, sqliteFileName));
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (Migrator m, int from, int to) async {
       if (from < 2) {
         await m.createTable(pomodoroTable);
+      }
+      if (from < 4) {
+        await m.addColumn(pomodoroTable, pomodoroTable.version);
+        await m.addColumn(pomodoroTable, pomodoroTable.updatedAt);
+        await m.addColumn(pomodoroTable, pomodoroTable.createdAt);
+        await m.addColumn(pomodoroTable, pomodoroTable.isDeleted);
+        await m.addColumn(pomodoroTable, pomodoroTable.syncStatus);
       }
     },
   );
