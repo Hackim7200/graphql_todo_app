@@ -2,10 +2,10 @@
 import 'package:drift/drift.dart';
 import 'package:frontend/database/database.dart';
 import 'package:frontend/sync/remote/todo_remote.dart';
-import 'package:frontend/sync/entities/sync_entity.dart';
+import 'package:frontend/sync/entities/syncable_entity.dart';
 
-class TodoSyncer implements SyncEntity {
-  TodoSyncer(this._db, this._remote);
+class TodoSyncable implements SyncableEntity {
+  TodoSyncable(this._db, this._remote);
 
   final AppDatabase _db;
   final TodoRemote _remote;
@@ -31,10 +31,9 @@ class TodoSyncer implements SyncEntity {
 
   @override
   Future<void> markAsSynced(String id) async {
-    final todoId = int.tryParse(id);
-    if (todoId == null) return;
+    if (id.isEmpty) return;
 
-    await (_db.update(_db.todoTable)..where((t) => t.id.equals(todoId))).write(
+    await (_db.update(_db.todoTable)..where((t) => t.id.equals(id))).write(
       const TodoTableCompanion(syncStatus: Value('synced')),
     );
   }
@@ -53,19 +52,18 @@ class TodoSyncer implements SyncEntity {
   }
 
   @override
-  Future<Map<String, dynamic>?> getLocalRecord(String id) async {
-    final todoId = int.tryParse(id);
-    if (todoId == null) return null;
+  Future<Map<String, dynamic>?> getLocalRow(String id) async {
+    if (id.isEmpty) return null;
     final row = await (_db.select(
       _db.todoTable,
-    )..where((t) => t.id.equals(todoId))).getSingleOrNull();
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
     if (row == null) return null;
     return _toMap(row);
   }
 
   @override
   Future<void> applyRemoteRecord(Map<String, dynamic> record) async {
-    final id = _toInt(record['id']);
+    final id = _todoIdFromRecord(record['id']);
     if (id == null) return;
 
     final companion = TodoTableCompanion(
@@ -92,6 +90,12 @@ class TodoSyncer implements SyncEntity {
       'isDeleted': row.isDeleted,
       'syncStatus': row.syncStatus,
     };
+  }
+
+  String? _todoIdFromRecord(dynamic value) {
+    if (value is String && value.isNotEmpty) return value;
+    if (value is int) return value.toString();
+    return null;
   }
 
   int? _toInt(dynamic value) {

@@ -36,7 +36,7 @@ class _TodoPageState extends State<TodoPage> {
     }
   }
 
-  Future<void> _deleteTodo(int id) async {
+  Future<void> _deleteTodo(String id) async {
     try {
       await widget.todoService.deleteTodo(id);
     } catch (e) {

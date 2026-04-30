@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 
 class TodoTable extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  TextColumn get id => text().withLength(min: 1, max: 64)();//UUID must be used instead of int since the same uuid will be given to ddb lambda wont generate new uuid
 
   TextColumn get title => text().withLength(min: 1, max: 32)();
   BoolColumn get completed => boolean().withDefault(const Constant(false))();
@@ -17,4 +17,7 @@ class TodoTable extends Table {
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
   TextColumn get syncStatus =>
       text().withLength(min: 1, max: 16).withDefault(const Constant('pending'))();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }

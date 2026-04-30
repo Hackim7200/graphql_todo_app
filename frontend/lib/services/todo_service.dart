@@ -1,10 +1,12 @@
 import 'package:drift/drift.dart';
 import 'package:frontend/database/database.dart';
+import 'package:uuid/uuid.dart';
 
 class TodoService {
   TodoService(this._db);
 
   final AppDatabase _db;
+  static const _uuid = Uuid();
 
   Stream<List<TodoTableData>> watchTodos() {
     return (_db.select(
@@ -18,18 +20,25 @@ class TodoService {
     )..orderBy([(t) => OrderingTerm.desc(t.createdAt)])).get();
   }
 
-  Future<int> addTodo(String title) {
+  Future<String> addTodo(String title) {
     final trimmedTitle = title.trim();
     if (trimmedTitle.isEmpty) {
       throw ArgumentError('Todo title cannot be empty.');
     }
 
+    final id = _uuid.v4();
     return _db
         .into(_db.todoTable)
-        .insert(TodoTableCompanion.insert(title: trimmedTitle));
+        .insert(
+          TodoTableCompanion.insert(
+            id: id,
+            title: trimmedTitle,
+          ),
+        )
+        .then((_) => id);
   }
 
-  Future<int> updateTodoTitle({required int id, required String title}) {
+  Future<int> updateTodoTitle({required String id, required String title}) {
     final trimmedTitle = title.trim();
     if (trimmedTitle.isEmpty) {
       throw ArgumentError('Todo title cannot be empty.');
@@ -40,7 +49,7 @@ class TodoService {
     );
   }
 
-  Future<int> deleteTodo(int id) {
+  Future<int> deleteTodo(String id) {
     return (_db.delete(_db.todoTable)..where((t) => t.id.equals(id))).go();
   }
 

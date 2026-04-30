@@ -19,7 +19,7 @@ class AppDatabase extends _$AppDatabase {
     : super(_openConnection(dbDirectory, sqliteFileName));
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -33,6 +33,18 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(pomodoroTable, pomodoroTable.createdAt);
         await m.addColumn(pomodoroTable, pomodoroTable.isDeleted);
         await m.addColumn(pomodoroTable, pomodoroTable.syncStatus);
+      }
+      if (from < 5) {
+        // Todo PK changed from int to UUID text; rebuild both tables.
+        await m.drop(pomodoroTable);
+        await m.drop(todoTable);
+        await m.createTable(todoTable);
+        await m.createTable(pomodoroTable);
+      }
+      if (from < 6) {
+        // Pomodoro PK changed from int to UUID text; todos unchanged.
+        await m.drop(pomodoroTable);
+        await m.createTable(pomodoroTable);
       }
     },
   );

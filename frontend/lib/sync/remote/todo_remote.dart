@@ -25,6 +25,8 @@ class TodoRemote {
   }
 
   Future<List<Map<String, dynamic>>> getTodosSince(DateTime? since) async {
+    //if time is null return all todos
+    // if time is not null returns todos updated after the time
     final updatedAfter = (since ?? DateTime.fromMillisecondsSinceEpoch(0))
         .toUtc()
         .toIso8601String();

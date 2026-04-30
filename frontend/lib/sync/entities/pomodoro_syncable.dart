@@ -2,10 +2,10 @@
 import 'package:drift/drift.dart';
 import 'package:frontend/database/database.dart';
 import 'package:frontend/sync/remote/pomodoro_remote.dart';
-import 'package:frontend/sync/entities/sync_entity.dart';
+import 'package:frontend/sync/entities/syncable_entity.dart';
 
-class PomodoroSyncer implements SyncEntity {
-  PomodoroSyncer(this._db, this._remote);
+class PomodoroSyncable implements SyncableEntity {
+  PomodoroSyncable(this._db, this._remote);
 
   final AppDatabase _db;
   final PomodoroRemote _remote;
@@ -34,12 +34,15 @@ class PomodoroSyncer implements SyncEntity {
 
   @override
   Future<void> applyRemoteRecord(Map<String, dynamic> record) async {
-    final id = _toInt(record['id']);
+    final id = _pomodoroIdFromRecord(record['id']);
     if (id == null) return;
+
+    final todoId = _todoIdFromRecord(record['todoId']);
+    if (todoId == null) return;
 
     final companion = PomodoroTableCompanion(
       id: Value(id),
-      todoId: Value(_toInt(record['todoId']) ?? 0),
+      todoId: Value(todoId),
       durationMinutes: Value(_toInt(record['durationMinutes']) ?? 25),
       startTime: Value(_toDateTime(record['startTime']) ?? DateTime.now()),
       endTime: Value(_toDateTime(record['endTime'])),
@@ -63,22 +66,21 @@ class PomodoroSyncer implements SyncEntity {
   }
 
   @override
-  Future<Map<String, dynamic>?> getLocalRecord(String id) async {
-    final pomodoroId = int.tryParse(id);
-    if (pomodoroId == null) return null;
+  Future<Map<String, dynamic>?> getLocalRow(String id) async {
+    if (id.isEmpty) return null;
     final row = await (_db.select(
       _db.pomodoroTable,
-    )..where((p) => p.id.equals(pomodoroId))).getSingleOrNull();
+    )..where((p) => p.id.equals(id))).getSingleOrNull();
     if (row == null) return null;
     return _toMap(row);
   }
 
   @override
   Future<void> markAsSynced(String id) async {
-    final pomodoroId = int.tryParse(id);
-    if (pomodoroId == null) return;
-    await (_db.update(_db.pomodoroTable)..where((p) => p.id.equals(pomodoroId)))
-        .write(const PomodoroTableCompanion(syncStatus: Value('synced')));
+    if (id.isEmpty) return;
+    await (_db.update(_db.pomodoroTable)..where((p) => p.id.equals(id))).write(
+      const PomodoroTableCompanion(syncStatus: Value('synced')),
+    );
   }
 
   Map<String, dynamic> _toMap(PomodoroTableData row) {
@@ -95,6 +97,18 @@ class PomodoroSyncer implements SyncEntity {
       'isDeleted': row.isDeleted,
       'syncStatus': row.syncStatus,
     };
+  }
+
+  String? _pomodoroIdFromRecord(dynamic value) {
+    if (value is String && value.isNotEmpty) return value;
+    if (value is int) return value.toString();
+    return null;
+  }
+
+  String? _todoIdFromRecord(dynamic value) {
+    if (value is String && value.isNotEmpty) return value;
+    if (value is int) return value.toString();
+    return null;
   }
 
   int? _toInt(dynamic value) {

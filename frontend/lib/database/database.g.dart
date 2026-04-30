@@ -11,16 +11,16 @@ class $TodoTableTable extends TodoTable
   $TodoTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 64,
     ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
@@ -142,6 +142,8 @@ class $TodoTableTable extends TodoTable
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('title')) {
       context.handle(
@@ -197,7 +199,7 @@ class $TodoTableTable extends TodoTable
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return TodoTableData(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
       title: attachedDatabase.typeMapping.read(
@@ -238,7 +240,7 @@ class $TodoTableTable extends TodoTable
 }
 
 class TodoTableData extends DataClass implements Insertable<TodoTableData> {
-  final int id;
+  final String id;
   final String title;
   final bool completed;
   final int version;
@@ -259,7 +261,7 @@ class TodoTableData extends DataClass implements Insertable<TodoTableData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     map['completed'] = Variable<bool>(completed);
     map['version'] = Variable<int>(version);
@@ -289,7 +291,7 @@ class TodoTableData extends DataClass implements Insertable<TodoTableData> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return TodoTableData(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       completed: serializer.fromJson<bool>(json['completed']),
       version: serializer.fromJson<int>(json['version']),
@@ -303,7 +305,7 @@ class TodoTableData extends DataClass implements Insertable<TodoTableData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'completed': serializer.toJson<bool>(completed),
       'version': serializer.toJson<int>(version),
@@ -315,7 +317,7 @@ class TodoTableData extends DataClass implements Insertable<TodoTableData> {
   }
 
   TodoTableData copyWith({
-    int? id,
+    String? id,
     String? title,
     bool? completed,
     int? version,
@@ -389,7 +391,7 @@ class TodoTableData extends DataClass implements Insertable<TodoTableData> {
 }
 
 class TodoTableCompanion extends UpdateCompanion<TodoTableData> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> title;
   final Value<bool> completed;
   final Value<int> version;
@@ -397,6 +399,7 @@ class TodoTableCompanion extends UpdateCompanion<TodoTableData> {
   final Value<DateTime> createdAt;
   final Value<bool> isDeleted;
   final Value<String> syncStatus;
+  final Value<int> rowid;
   const TodoTableCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -406,9 +409,10 @@ class TodoTableCompanion extends UpdateCompanion<TodoTableData> {
     this.createdAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.syncStatus = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   TodoTableCompanion.insert({
-    this.id = const Value.absent(),
+    required String id,
     required String title,
     this.completed = const Value.absent(),
     this.version = const Value.absent(),
@@ -416,9 +420,11 @@ class TodoTableCompanion extends UpdateCompanion<TodoTableData> {
     this.createdAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.syncStatus = const Value.absent(),
-  }) : title = Value(title);
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       title = Value(title);
   static Insertable<TodoTableData> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? title,
     Expression<bool>? completed,
     Expression<int>? version,
@@ -426,6 +432,7 @@ class TodoTableCompanion extends UpdateCompanion<TodoTableData> {
     Expression<DateTime>? createdAt,
     Expression<bool>? isDeleted,
     Expression<String>? syncStatus,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -436,11 +443,12 @@ class TodoTableCompanion extends UpdateCompanion<TodoTableData> {
       if (createdAt != null) 'created_at': createdAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (syncStatus != null) 'sync_status': syncStatus,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   TodoTableCompanion copyWith({
-    Value<int>? id,
+    Value<String>? id,
     Value<String>? title,
     Value<bool>? completed,
     Value<int>? version,
@@ -448,6 +456,7 @@ class TodoTableCompanion extends UpdateCompanion<TodoTableData> {
     Value<DateTime>? createdAt,
     Value<bool>? isDeleted,
     Value<String>? syncStatus,
+    Value<int>? rowid,
   }) {
     return TodoTableCompanion(
       id: id ?? this.id,
@@ -458,6 +467,7 @@ class TodoTableCompanion extends UpdateCompanion<TodoTableData> {
       createdAt: createdAt ?? this.createdAt,
       isDeleted: isDeleted ?? this.isDeleted,
       syncStatus: syncStatus ?? this.syncStatus,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -465,7 +475,7 @@ class TodoTableCompanion extends UpdateCompanion<TodoTableData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -488,6 +498,9 @@ class TodoTableCompanion extends UpdateCompanion<TodoTableData> {
     if (syncStatus.present) {
       map['sync_status'] = Variable<String>(syncStatus.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -501,7 +514,8 @@ class TodoTableCompanion extends UpdateCompanion<TodoTableData> {
           ..write('updatedAt: $updatedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('isDeleted: $isDeleted, ')
-          ..write('syncStatus: $syncStatus')
+          ..write('syncStatus: $syncStatus, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -515,24 +529,24 @@ class $PomodoroTableTable extends PomodoroTable
   $PomodoroTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 64,
     ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _todoIdMeta = const VerificationMeta('todoId');
   @override
-  late final GeneratedColumn<int> todoId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> todoId = GeneratedColumn<String>(
     'todo_id',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES todo_table (id) ON DELETE CASCADE',
@@ -682,6 +696,8 @@ class $PomodoroTableTable extends PomodoroTable
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('todo_id')) {
       context.handle(
@@ -760,11 +776,11 @@ class $PomodoroTableTable extends PomodoroTable
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PomodoroTableData(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
       todoId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}todo_id'],
       )!,
       durationMinutes: attachedDatabase.typeMapping.read(
@@ -814,8 +830,8 @@ class $PomodoroTableTable extends PomodoroTable
 
 class PomodoroTableData extends DataClass
     implements Insertable<PomodoroTableData> {
-  final int id;
-  final int todoId;
+  final String id;
+  final String todoId;
   final int durationMinutes;
   final DateTime startTime;
   final DateTime? endTime;
@@ -841,8 +857,8 @@ class PomodoroTableData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['todo_id'] = Variable<int>(todoId);
+    map['id'] = Variable<String>(id);
+    map['todo_id'] = Variable<String>(todoId);
     map['duration_minutes'] = Variable<int>(durationMinutes);
     map['start_time'] = Variable<DateTime>(startTime);
     if (!nullToAbsent || endTime != null) {
@@ -881,8 +897,8 @@ class PomodoroTableData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PomodoroTableData(
-      id: serializer.fromJson<int>(json['id']),
-      todoId: serializer.fromJson<int>(json['todoId']),
+      id: serializer.fromJson<String>(json['id']),
+      todoId: serializer.fromJson<String>(json['todoId']),
       durationMinutes: serializer.fromJson<int>(json['durationMinutes']),
       startTime: serializer.fromJson<DateTime>(json['startTime']),
       endTime: serializer.fromJson<DateTime?>(json['endTime']),
@@ -898,8 +914,8 @@ class PomodoroTableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'todoId': serializer.toJson<int>(todoId),
+      'id': serializer.toJson<String>(id),
+      'todoId': serializer.toJson<String>(todoId),
       'durationMinutes': serializer.toJson<int>(durationMinutes),
       'startTime': serializer.toJson<DateTime>(startTime),
       'endTime': serializer.toJson<DateTime?>(endTime),
@@ -913,8 +929,8 @@ class PomodoroTableData extends DataClass
   }
 
   PomodoroTableData copyWith({
-    int? id,
-    int? todoId,
+    String? id,
+    String? todoId,
     int? durationMinutes,
     DateTime? startTime,
     Value<DateTime?> endTime = const Value.absent(),
@@ -1007,8 +1023,8 @@ class PomodoroTableData extends DataClass
 }
 
 class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
-  final Value<int> id;
-  final Value<int> todoId;
+  final Value<String> id;
+  final Value<String> todoId;
   final Value<int> durationMinutes;
   final Value<DateTime> startTime;
   final Value<DateTime?> endTime;
@@ -1018,6 +1034,7 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
   final Value<DateTime> createdAt;
   final Value<bool> isDeleted;
   final Value<String> syncStatus;
+  final Value<int> rowid;
   const PomodoroTableCompanion({
     this.id = const Value.absent(),
     this.todoId = const Value.absent(),
@@ -1030,10 +1047,11 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
     this.createdAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.syncStatus = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   PomodoroTableCompanion.insert({
-    this.id = const Value.absent(),
-    required int todoId,
+    required String id,
+    required String todoId,
     this.durationMinutes = const Value.absent(),
     required DateTime startTime,
     this.endTime = const Value.absent(),
@@ -1043,11 +1061,13 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
     this.createdAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.syncStatus = const Value.absent(),
-  }) : todoId = Value(todoId),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       todoId = Value(todoId),
        startTime = Value(startTime);
   static Insertable<PomodoroTableData> custom({
-    Expression<int>? id,
-    Expression<int>? todoId,
+    Expression<String>? id,
+    Expression<String>? todoId,
     Expression<int>? durationMinutes,
     Expression<DateTime>? startTime,
     Expression<DateTime>? endTime,
@@ -1057,6 +1077,7 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
     Expression<DateTime>? createdAt,
     Expression<bool>? isDeleted,
     Expression<String>? syncStatus,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1070,12 +1091,13 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
       if (createdAt != null) 'created_at': createdAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (syncStatus != null) 'sync_status': syncStatus,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   PomodoroTableCompanion copyWith({
-    Value<int>? id,
-    Value<int>? todoId,
+    Value<String>? id,
+    Value<String>? todoId,
     Value<int>? durationMinutes,
     Value<DateTime>? startTime,
     Value<DateTime?>? endTime,
@@ -1085,6 +1107,7 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
     Value<DateTime>? createdAt,
     Value<bool>? isDeleted,
     Value<String>? syncStatus,
+    Value<int>? rowid,
   }) {
     return PomodoroTableCompanion(
       id: id ?? this.id,
@@ -1098,6 +1121,7 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
       createdAt: createdAt ?? this.createdAt,
       isDeleted: isDeleted ?? this.isDeleted,
       syncStatus: syncStatus ?? this.syncStatus,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1105,10 +1129,10 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (todoId.present) {
-      map['todo_id'] = Variable<int>(todoId.value);
+      map['todo_id'] = Variable<String>(todoId.value);
     }
     if (durationMinutes.present) {
       map['duration_minutes'] = Variable<int>(durationMinutes.value);
@@ -1137,6 +1161,9 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
     if (syncStatus.present) {
       map['sync_status'] = Variable<String>(syncStatus.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -1153,7 +1180,8 @@ class PomodoroTableCompanion extends UpdateCompanion<PomodoroTableData> {
           ..write('updatedAt: $updatedAt, ')
           ..write('createdAt: $createdAt, ')
           ..write('isDeleted: $isDeleted, ')
-          ..write('syncStatus: $syncStatus')
+          ..write('syncStatus: $syncStatus, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1186,7 +1214,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 typedef $$TodoTableTableCreateCompanionBuilder =
     TodoTableCompanion Function({
-      Value<int> id,
+      required String id,
       required String title,
       Value<bool> completed,
       Value<int> version,
@@ -1194,10 +1222,11 @@ typedef $$TodoTableTableCreateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<bool> isDeleted,
       Value<String> syncStatus,
+      Value<int> rowid,
     });
 typedef $$TodoTableTableUpdateCompanionBuilder =
     TodoTableCompanion Function({
-      Value<int> id,
+      Value<String> id,
       Value<String> title,
       Value<bool> completed,
       Value<int> version,
@@ -1205,6 +1234,7 @@ typedef $$TodoTableTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<bool> isDeleted,
       Value<String> syncStatus,
+      Value<int> rowid,
     });
 
 final class $$TodoTableTableReferences
@@ -1221,7 +1251,7 @@ final class $$TodoTableTableReferences
     final manager = $$PomodoroTableTableTableManager(
       $_db,
       $_db.pomodoroTable,
-    ).filter((f) => f.todoId.id.sqlEquals($_itemColumn<int>('id')!));
+    ).filter((f) => f.todoId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_pomodoroTableRefsTable($_db));
     return ProcessedTableManager(
@@ -1239,7 +1269,7 @@ class $$TodoTableTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
@@ -1314,7 +1344,7 @@ class $$TodoTableTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
@@ -1364,7 +1394,7 @@ class $$TodoTableTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
@@ -1444,7 +1474,7 @@ class $$TodoTableTableTableManager
               $$TodoTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<bool> completed = const Value.absent(),
                 Value<int> version = const Value.absent(),
@@ -1452,6 +1482,7 @@ class $$TodoTableTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String> syncStatus = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => TodoTableCompanion(
                 id: id,
                 title: title,
@@ -1461,10 +1492,11 @@ class $$TodoTableTableTableManager
                 createdAt: createdAt,
                 isDeleted: isDeleted,
                 syncStatus: syncStatus,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                required String id,
                 required String title,
                 Value<bool> completed = const Value.absent(),
                 Value<int> version = const Value.absent(),
@@ -1472,6 +1504,7 @@ class $$TodoTableTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String> syncStatus = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => TodoTableCompanion.insert(
                 id: id,
                 title: title,
@@ -1481,6 +1514,7 @@ class $$TodoTableTableTableManager
                 createdAt: createdAt,
                 isDeleted: isDeleted,
                 syncStatus: syncStatus,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -1542,8 +1576,8 @@ typedef $$TodoTableTableProcessedTableManager =
     >;
 typedef $$PomodoroTableTableCreateCompanionBuilder =
     PomodoroTableCompanion Function({
-      Value<int> id,
-      required int todoId,
+      required String id,
+      required String todoId,
       Value<int> durationMinutes,
       required DateTime startTime,
       Value<DateTime?> endTime,
@@ -1553,11 +1587,12 @@ typedef $$PomodoroTableTableCreateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<bool> isDeleted,
       Value<String> syncStatus,
+      Value<int> rowid,
     });
 typedef $$PomodoroTableTableUpdateCompanionBuilder =
     PomodoroTableCompanion Function({
-      Value<int> id,
-      Value<int> todoId,
+      Value<String> id,
+      Value<String> todoId,
       Value<int> durationMinutes,
       Value<DateTime> startTime,
       Value<DateTime?> endTime,
@@ -1567,6 +1602,7 @@ typedef $$PomodoroTableTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<bool> isDeleted,
       Value<String> syncStatus,
+      Value<int> rowid,
     });
 
 final class $$PomodoroTableTableReferences
@@ -1584,7 +1620,7 @@ final class $$PomodoroTableTableReferences
       );
 
   $$TodoTableTableProcessedTableManager get todoId {
-    final $_column = $_itemColumn<int>('todo_id')!;
+    final $_column = $_itemColumn<String>('todo_id')!;
 
     final manager = $$TodoTableTableTableManager(
       $_db,
@@ -1607,7 +1643,7 @@ class $$PomodoroTableTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
@@ -1690,7 +1726,7 @@ class $$PomodoroTableTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
@@ -1773,7 +1809,7 @@ class $$PomodoroTableTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<int> get durationMinutes => $composableBuilder(
@@ -1859,8 +1895,8 @@ class $$PomodoroTableTableTableManager
               $$PomodoroTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
-                Value<int> todoId = const Value.absent(),
+                Value<String> id = const Value.absent(),
+                Value<String> todoId = const Value.absent(),
                 Value<int> durationMinutes = const Value.absent(),
                 Value<DateTime> startTime = const Value.absent(),
                 Value<DateTime?> endTime = const Value.absent(),
@@ -1870,6 +1906,7 @@ class $$PomodoroTableTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String> syncStatus = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => PomodoroTableCompanion(
                 id: id,
                 todoId: todoId,
@@ -1882,11 +1919,12 @@ class $$PomodoroTableTableTableManager
                 createdAt: createdAt,
                 isDeleted: isDeleted,
                 syncStatus: syncStatus,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
-                required int todoId,
+                required String id,
+                required String todoId,
                 Value<int> durationMinutes = const Value.absent(),
                 required DateTime startTime,
                 Value<DateTime?> endTime = const Value.absent(),
@@ -1896,6 +1934,7 @@ class $$PomodoroTableTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<String> syncStatus = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => PomodoroTableCompanion.insert(
                 id: id,
                 todoId: todoId,
@@ -1908,6 +1947,7 @@ class $$PomodoroTableTableTableManager
                 createdAt: createdAt,
                 isDeleted: isDeleted,
                 syncStatus: syncStatus,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(

@@ -37,7 +37,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
     }
   }
 
-  Future<void> _completePomodoro(int id) async {
+  Future<void> _completePomodoro(String id) async {
     try {
       await widget.pomodoroService.completePomodoro(id: id);
     } catch (e) {
@@ -48,7 +48,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
     }
   }
 
-  Future<void> _deletePomodoro(int id) async {
+  Future<void> _deletePomodoro(String id) async {
     try {
       await widget.pomodoroService.deletePomodoro(id);
     } catch (e) {

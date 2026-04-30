@@ -1,5 +1,5 @@
 /// Defines the shared contract each entity sync implementation must follow.
-abstract class SyncEntity {
+abstract class SyncableEntity {
   String get entityName;
 
   // push side
@@ -13,6 +13,6 @@ abstract class SyncEntity {
   Future<List<Map<String, dynamic>>> fetchRemoteChanges(DateTime? since);
 
   // LWW
-  Future<Map<String, dynamic>?> getLocalRecord(String id);
+  Future<Map<String, dynamic>?> getLocalRow(String id);
   Future<void> applyRemoteRecord(Map<String, dynamic> record);
 }
