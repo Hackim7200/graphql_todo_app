@@ -1,10 +1,10 @@
-/// Defines the shared contract every syncable entity must implement.
-abstract class Syncable {
+/// Defines the shared contract each entity sync implementation must follow.
+abstract class SyncEntity {
   String get entityName;
 
   // push side
-  Future<List<Map<String, dynamic>>> getPendingChanges();
-  Future<void> pushRecord(Map<String, dynamic> record);
+  Future<List<Map<String, dynamic>>> getUnsyncedRowsFromLocalDB();
+  Future<void> pushUnsyncedRowsToRemoteDB(Map<String, dynamic> record);
   Future<void> markAsSynced(String id);
 
   // pull side

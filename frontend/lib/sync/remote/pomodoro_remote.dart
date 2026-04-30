@@ -1,4 +1,4 @@
-/// Handles GraphQL calls to push and pull pomodoro records from the backend.
+// Handles GraphQL calls to push and pull pomodoro records from the backend.
 import 'dart:convert';
 
 import 'package:amplify_flutter/amplify_flutter.dart';

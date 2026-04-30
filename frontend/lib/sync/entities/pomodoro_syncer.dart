@@ -1,10 +1,10 @@
-/// Connects local pomodoro data with remote API calls for syncing.
+// Connects local pomodoro data with remote API calls for syncing.
 import 'package:drift/drift.dart';
 import 'package:frontend/database/database.dart';
 import 'package:frontend/sync/remote/pomodoro_remote.dart';
-import 'package:frontend/sync/entities/syncable.dart';
+import 'package:frontend/sync/entities/sync_entity.dart';
 
-class PomodoroSyncer implements Syncable {
+class PomodoroSyncer implements SyncEntity {
   PomodoroSyncer(this._db, this._remote);
 
   final AppDatabase _db;
@@ -15,7 +15,7 @@ class PomodoroSyncer implements Syncable {
   String get entityName => 'pomodoro';
 
   @override
-  Future<List<Map<String, dynamic>>> getPendingChanges() async {
+  Future<List<Map<String, dynamic>>> getUnsyncedRowsFromLocalDB() async {
     final rows = await (_db.select(
       _db.pomodoroTable,
     )..where((p) => p.syncStatus.equals('pending'))).get();
@@ -23,7 +23,7 @@ class PomodoroSyncer implements Syncable {
   }
 
   @override
-  Future<void> pushRecord(Map<String, dynamic> record) {
+  Future<void> pushUnsyncedRowsToRemoteDB(Map<String, dynamic> record) {
     return _remote.upsertPomodoro(record);
   }
 
@@ -77,11 +77,8 @@ class PomodoroSyncer implements Syncable {
   Future<void> markAsSynced(String id) async {
     final pomodoroId = int.tryParse(id);
     if (pomodoroId == null) return;
-    await (_db.update(
-      _db.pomodoroTable,
-    )..where((p) => p.id.equals(pomodoroId))).write(
-      const PomodoroTableCompanion(syncStatus: Value('synced')),
-    );
+    await (_db.update(_db.pomodoroTable)..where((p) => p.id.equals(pomodoroId)))
+        .write(const PomodoroTableCompanion(syncStatus: Value('synced')));
   }
 
   Map<String, dynamic> _toMap(PomodoroTableData row) {

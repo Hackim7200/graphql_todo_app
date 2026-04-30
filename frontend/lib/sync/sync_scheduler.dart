@@ -1,20 +1,20 @@
-/// Starts and manages periodic sync runs for the whole app.
+// Starts and manages periodic sync runs for the whole app.
 import 'dart:async';
 
-import 'package:frontend/sync/sync_orchestrator.dart';
+import 'package:frontend/sync/sync_coordinator.dart';
 
 class SyncScheduler {
-  final SyncOrchestrator _orchestrator;
+  final SyncCoordinator _coordinator;
   Timer? _timer;
 
-  SyncScheduler(this._orchestrator);
+  SyncScheduler(this._coordinator);
 
   void start() {
-    unawaited(_orchestrator.sync());
+    unawaited(_coordinator.syncOnce());
     _timer?.cancel();
     _timer = Timer.periodic(
       const Duration(minutes: 1),
-      (_) => unawaited(_orchestrator.sync()),
+      (_) => unawaited(_coordinator.syncOnce()),
     );
   }
 
@@ -22,5 +22,5 @@ class SyncScheduler {
     _timer?.cancel();
   }
 
-  Future<void> syncNow() => _orchestrator.sync();
+  Future<void> syncNow() => _coordinator.syncOnce();
 }

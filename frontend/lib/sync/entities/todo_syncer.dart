@@ -1,11 +1,10 @@
-/// Connects local todo data with remote API calls for syncing.
-/// takes in database and remote api gets data from database
+// Connects local todo data with remote API calls for syncing.
 import 'package:drift/drift.dart';
 import 'package:frontend/database/database.dart';
 import 'package:frontend/sync/remote/todo_remote.dart';
-import 'package:frontend/sync/entities/syncable.dart';
+import 'package:frontend/sync/entities/sync_entity.dart';
 
-class TodoSyncer implements Syncable {
+class TodoSyncer implements SyncEntity {
   TodoSyncer(this._db, this._remote);
 
   final AppDatabase _db;
@@ -16,7 +15,9 @@ class TodoSyncer implements Syncable {
   String get entityName => 'todo';
 
   @override
-  Future<List<Map<String, dynamic>>> getPendingChanges() async {
+  Future<List<Map<String, dynamic>>> getUnsyncedRowsFromLocalDB() async {
+    //get all rows from local DB where syncStatus is 'pending'
+    //return the rows as a list of maps
     final rows = await (_db.select(
       _db.todoTable,
     )..where((t) => t.syncStatus.equals('pending'))).get();
@@ -24,7 +25,7 @@ class TodoSyncer implements Syncable {
   }
 
   @override
-  Future<void> pushRecord(Map<String, dynamic> record) {
+  Future<void> pushUnsyncedRowsToRemoteDB(Map<String, dynamic> record) {
     return _remote.upsertTodo(record);
   }
 
