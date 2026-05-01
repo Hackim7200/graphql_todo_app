@@ -3,10 +3,10 @@ import { SignInOutput, fetchAuthSession, signIn } from "@aws-amplify/auth";
 import { CognitoIdentityClient } from "@aws-sdk/client-cognito-identity";
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 
-// Values copied from lib/outputs.json ("AuthStack-PomodoroPlans")
-const USER_POOL_ID = "eu-west-2_iuQLDQPgj";
-const USER_POOL_CLIENT_ID = "7559r7tun6lvgmfqsdvjni2ds";
-const IDENTITY_POOL_ID = "eu-west-2:aa61fcf2-d366-44dd-9f5b-e99f9878687c";
+// Values updated from lib/outputs.json ("AuthStack-PomodoroPlans")
+const USER_POOL_ID = "eu-west-2_vp6FqciTk";
+const USER_POOL_CLIENT_ID = "6irk04c58fed8tr8upero9f9um";
+const IDENTITY_POOL_ID = "eu-west-2:f70c4a4f-5bc7-449e-918a-eefdc30aed4d";
 const AWS_REGION = "eu-west-2";
 
 Amplify.configure({
@@ -36,6 +36,5 @@ export class AuthService {
   public async getIdToken() {
     const authSession = await fetchAuthSession();
     return authSession.tokens?.idToken?.toString();
-    
   }
 }

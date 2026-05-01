@@ -10,8 +10,10 @@ import type {
 const MERGE_ORDER = [
   "base.graphql",
   "shared.graphql",
-  "events.graphql",
+  "pomodoro.graphql",
+
   "todos.graphql",
+
 ] as const;
 
 export function mergeSchemas(): string {

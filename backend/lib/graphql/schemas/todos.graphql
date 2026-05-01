@@ -11,12 +11,11 @@ type Mutation {
 
 type Subscription {
   onTodoChanged: Todo
-    @aws_subscribe(
-      mutations: ["createTodo", "updateTodo", "deleteTodo"]
-    )
+    @aws_subscribe(mutations: ["createTodo", "updateTodo", "deleteTodo"])
 }
 
 input CreateTodoInput {
+  id: ID!
   title: String!
   isCompleted: Boolean
 }
