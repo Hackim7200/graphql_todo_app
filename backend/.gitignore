@@ -1,5 +1,8 @@
-*.js
+#most .js are generated files by not resoov
+*.js 
 !jest.config.js
+# AppSync pipeline resolvers are authored as .js (not emitted from tsc); keep them in git.
+!lib/services/**/resolvers/**/*.js
 *.d.ts
 node_modules
 dist/
