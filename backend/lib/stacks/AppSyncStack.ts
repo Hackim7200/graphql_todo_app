@@ -49,6 +49,10 @@ export class AppSyncStack extends Stack {
     const todosDS = api.addDynamoDbDataSource("TodoDS", props.todoTable);
 
     const todoResolversDir = path.join(__dirname, "../services/todo/resolvers");
+    const pomodoroResolversDir = path.join(
+      __dirname,
+      "../services/pomodoro/resolvers",
+    );
 
     // Add the resolvers that will make use of the datasource
     api.createResolver("getTodoResolver", {
@@ -90,6 +94,52 @@ export class AppSyncStack extends Stack {
 
       runtime: FunctionRuntime.JS_1_0_0,
       code: Code.fromAsset(path.join(todoResolversDir, "deleteTodo.js")),
+    });
+
+    api.createResolver("getPomodoroResolver", {
+      typeName: "Query",
+      fieldName: "getPomodoro",
+      dataSource: todosDS,
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset(path.join(pomodoroResolversDir, "getPomodoro.js")),
+    });
+
+    api.createResolver("listPomodorosResolver", {
+      typeName: "Query",
+      fieldName: "listPomodoros",
+      dataSource: todosDS,
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset(path.join(pomodoroResolversDir, "listPomodoros.js")),
+    });
+
+    api.createResolver("createPomodoroResolver", {
+      typeName: "Mutation",
+      fieldName: "createPomodoro",
+      dataSource: todosDS,
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset(
+        path.join(pomodoroResolversDir, "createPomodoro.js"),
+      ),
+    });
+
+    api.createResolver("updatePomodoroResolver", {
+      typeName: "Mutation",
+      fieldName: "updatePomodoro",
+      dataSource: todosDS,
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset(
+        path.join(pomodoroResolversDir, "updatePomodoro.js"),
+      ),
+    });
+
+    api.createResolver("deletePomodoroResolver", {
+      typeName: "Mutation",
+      fieldName: "deletePomodoro",
+      dataSource: todosDS,
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset(
+        path.join(pomodoroResolversDir, "deletePomodoro.js"),
+      ),
     });
 
     new CfnOutput(this, "AppSyncGraphQlUrl", {

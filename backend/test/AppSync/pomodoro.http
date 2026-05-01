@@ -1,85 +1,91 @@
 # AppSync GraphQL — REST Client / httpYac
-# Copy AppSyncGraphQlUrl from CDK outputs into @url. Use Cognito ID token (token_use=id) as @token.
-# Subscriptions (onTodoChanged) require the WebSocket URL from AppSyncRealtimeUrl — not plain POST here.
+# Set @url and @token (same as todo.http). Set @todoId to a real todo id from listTodos.
 
 @url = https://coqaixyo6rg2bjmfbgefexyysm.appsync-api.eu-west-2.amazonaws.com/graphql
-# onTodoChanged: filtering Todo.owner === Cognito identity.sub is set by the subscription resolver (enhanced filtering).
 @token = eyJraWQiOiI0dDgyQVBpVCtLXC82TWpTODRCekRMbVQwczZta2hnN2FRQU9IZnlSSHhIST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhNjIyZTI2NC00MDgxLTcwYjYtNWViNy0yMWM4OWI5YTIxMzkiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMi5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTJfdnA2RnFjaVRrIiwiY29nbml0bzp1c2VybmFtZSI6ImE2MjJlMjY0LTQwODEtNzBiNi01ZWI3LTIxYzg5YjlhMjEzOSIsIm9yaWdpbl9qdGkiOiIwZWUyMjc2Mi1iOGFjLTQ0ZmQtODVkZS1jODVhNTAzNDIyNTkiLCJhdWQiOiI2aXJrMDRjNThmZWQ4dHI4dXBlcm85Zjl1bSIsImV2ZW50X2lkIjoiYWFkZjcyMmMtNWM1MC00ZjU1LTgyYjUtODAxMTlmNTI0ZmQwIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3Nzc2MzA1NzUsImV4cCI6MTc3NzYzNDE3NSwiaWF0IjoxNzc3NjMwNTc1LCJqdGkiOiI2MWFiNjMzNS0wNDA0LTQwMWUtOWViYy1kNWRiZjU3NWI4YzIiLCJlbWFpbCI6Imhpa21hdGhha2ltLmRldkBnbWFpbC5jb20ifQ.lajteZjNvebR3u4xnz5gBPuxnxT6xUyZBXjIUfHrJ3zi_RmUf_ITfkQa7B3nmFOXwRFayHDCg4N5nAQuSlpxW6GSfCUMHUGWjAKu0nWjKwcDcYV0PlPhF2nHMJ6DHE33JYvGPT0TmyLXav-Oet9NQSGEvRs84C_mzeYu6C1wH40bNYBR7D7394KijWQ3zdd-oObKxvJBsyK-tM4S0n1HQ6m-Sqq2tHvDAsPoL4sEoTBh0SfXKs-aitfG_353S4inwOfZiVhO36SWLnSbAJV8_IHVtdJWWgW7A76Ze1EAYnHQAR5UZV7OE4LYzeCdzsCb96T84Rr18PN9ieWKeKIvYQ
 
+@todoId = 001
 
+# onPomodoroChanged { todoId id title isCompleted duration owner createdAt updatedAt }
 
-# Subscription over WSS (not POST): subscription OnTodoChanged { onTodoChanged { id title isCompleted owner createdAt updatedAt } }
-
-### Create todo
+### Create pomodoro (under @todoId)
 POST {{url}}
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation CreateTodo($input: CreateTodoInput!) { createTodo(input: $input) { id title isCompleted owner createdAt updatedAt } }",
+  "query": "mutation CreatePomodoro($input: CreatePomodoroInput!) { createPomodoro(input: $input) { todoId id title isCompleted duration owner createdAt updatedAt } }",
   "variables": {
     "input": {
-      "id": "003",
-      "title": "new todo item",
+      "todoId": "{{todoId}}",
+      "id": "pom-001",
+      "title": "Focus block",
+      "duration": 1500,
       "isCompleted": false
     }
   }
 }
 
-### List todos (paginated)
+### List pomodoros for a todo
 POST {{url}}
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "query": "query ListTodos($limit: Int, $nextToken: String) { listTodos(limit: $limit, nextToken: $nextToken) { items { id title isCompleted owner createdAt updatedAt } nextToken } }",
+  "query": "query ListPomodoros($todoId: ID!, $limit: Int, $nextToken: String) { listPomodoros(todoId: $todoId, limit: $limit, nextToken: $nextToken) { items { todoId id title isCompleted duration owner createdAt updatedAt } nextToken } }",
   "variables": {
+    "todoId": "{{todoId}}",
     "limit": 50,
     "nextToken": null
   }
 }
 
-### Get one todo by id (replace id from create or list response)
+### Get pomodoro by todo + id
 POST {{url}}
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "query": "query GetTodo($id: ID!) { getTodo(id: $id) { id title isCompleted owner createdAt updatedAt } }",
+  "query": "query GetPomodoro($todoId: ID!, $id: ID!) { getPomodoro(todoId: $todoId, id: $id) { todoId id title isCompleted duration owner createdAt updatedAt } }",
   "variables": {
-    "id": "001"
+    "todoId": "{{todoId}}",
+    "id": "pom-001"
   }
 }
 
-### Update todo (replace id with a real todo id)
+### Update pomodoro
 POST {{url}}
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation UpdateTodo($input: UpdateTodoInput!) { updateTodo(input: $input) { id title isCompleted owner createdAt updatedAt } }",
+  "query": "mutation UpdatePomodoro($input: UpdatePomodoroInput!) { updatePomodoro(input: $input) { todoId id title isCompleted duration owner createdAt updatedAt } }",
   "variables": {
     "input": {
-      "id": "48e47062-3bef-4512-9062-f28d27d587f8",
-      "title": "Fatty cat",
+      "todoId": "{{todoId}}",
+      "id": "pom-001",
+      "title": "Focus block (updated)",
+      "duration": 1800,
       "isCompleted": true
     }
   }
 }
 
-### Delete todo (replace id with a real todo id)
+### Delete pomodoro
 POST {{url}}
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation DeleteTodo($id: ID!) { deleteTodo(id: $id) { id title isCompleted owner createdAt updatedAt } }",
+  "query": "mutation DeletePomodoro($todoId: ID!, $id: ID!) { deletePomodoro(todoId: $todoId, id: $id) { todoId id title isCompleted duration owner createdAt updatedAt } }",
   "variables": {
-    "id": "48e47062-3bef-4512-9062-f28d27d587f8"
+    "todoId": "{{todoId}}",
+    "id": "pom-001"
   }
 }
+

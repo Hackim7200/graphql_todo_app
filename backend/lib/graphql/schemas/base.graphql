@@ -1,6 +1,36 @@
-# Root operation mapping only. Concrete Query/Mutation/Subscription fields live in domain files (e.g. todos.graphql).
+# Root operation mapping and root operation fields.
+# Keep one concrete `type Query/Mutation/Subscription` definition in this file.
 schema {
   query: Query
   mutation: Mutation
   subscription: Subscription
+}
+
+type Query {
+  getTodo(id: ID!): Todo!
+  listTodos(limit: Int, nextToken: String): TodoConnection!
+  getPomodoro(todoId: ID!, id: ID!): Pomodoro!
+  listPomodoros(
+    todoId: ID!
+    limit: Int
+    nextToken: String
+  ): PomodoroConnection!
+}
+
+type Mutation {
+  createTodo(input: CreateTodoInput!): Todo!
+  updateTodo(input: UpdateTodoInput!): Todo!
+  deleteTodo(id: ID!): Todo!
+  createPomodoro(input: CreatePomodoroInput!): Pomodoro!
+  updatePomodoro(input: UpdatePomodoroInput!): Pomodoro!
+  deletePomodoro(todoId: ID!, id: ID!): Pomodoro!
+}
+
+type Subscription {
+  onTodoChanged: Todo
+    @aws_subscribe(mutations: ["createTodo", "updateTodo", "deleteTodo"])
+  onPomodoroChanged: Pomodoro
+    @aws_subscribe(
+      mutations: ["createPomodoro", "updatePomodoro", "deletePomodoro"]
+    )
 }

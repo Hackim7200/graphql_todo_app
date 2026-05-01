@@ -1,2 +1,40 @@
-# pomodoros domain — once Query/Mutation roots exist (see todos.graphql), add fields with
-# `extend type Query { … }` / `extend type Mutation { … }` and types below.
+
+input CreatePomodoroInput {
+  """Parent todo (one todo has many pomodoros)."""
+  todoId: ID!
+  id: ID!
+  title: String!
+  """
+  Length of the pomodoro in seconds (e.g. 1500 for 25 minutes).
+  """
+  duration: Int!
+  isCompleted: Boolean
+}
+
+input UpdatePomodoroInput {
+  todoId: ID!
+  id: ID!
+  title: String
+  duration: Int
+  isCompleted: Boolean
+}
+
+type Pomodoro {
+  """Parent todo id."""
+  todoId: ID!
+  id: ID!
+  title: String!
+  isCompleted: Boolean!
+  """
+  Length of the pomodoro in seconds.
+  """
+  duration: Int!
+  owner: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type PomodoroConnection {
+  items: [Pomodoro!]!
+  nextToken: String
+}

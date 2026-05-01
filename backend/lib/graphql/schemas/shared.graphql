@@ -1,2 +1,0 @@
-# Shared types and scalars used by multiple domains (e.g. PageInfo, common inputs).
-# Keep domain-specific types in their domain files to avoid duplication.

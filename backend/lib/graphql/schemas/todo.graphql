@@ -1,18 +1,3 @@
-type Query {
-  getTodo(id: ID!): Todo!
-  listTodos(limit: Int, nextToken: String): TodoConnection!
-}
-
-type Mutation {
-  createTodo(input: CreateTodoInput!): Todo!
-  updateTodo(input: UpdateTodoInput!): Todo!
-  deleteTodo(id: ID!): Todo!
-}
-
-type Subscription {
-  onTodoChanged: Todo
-    @aws_subscribe(mutations: ["createTodo", "updateTodo", "deleteTodo"])
-}
 
 input CreateTodoInput {
   id: ID!

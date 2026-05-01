@@ -9,10 +9,8 @@ import type {
 /** Order matters: schema root mapping (base.graphql), then shared notes, then domain types. */
 const MERGE_ORDER = [
   "base.graphql",
-  "shared.graphql",
+  "todo.graphql",
   "pomodoro.graphql",
-
-  "todos.graphql",
 
 ] as const;
 
